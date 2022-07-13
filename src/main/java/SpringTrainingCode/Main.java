@@ -9,25 +9,19 @@ import SpringTrainingCode.service.BankReportService;
 import SpringTrainingCode.service.BankReportServiceImpl;
 import SpringTrainingCode.service.Banking;
 import SpringTrainingCode.service.storage.ClientRepository;
-
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import static java.lang.System.*;
 
 @Slf4j
 public class Main {
     private static final String[] CLIENT_NAMES =
-            {"Артём Сурков", "Иван Иванов", "Сергей Сергеев"};
+            {"Артём Сурков", "Илья Бикмеев", "Марина Иванова"};
 
-    @SneakyThrows
     public static void main(String[] args) {
         ApplicationContext context =
                 new ClassPathXmlApplicationContext("applicationContext.xml");
-
-        log.debug("Context: " + context);
 
         Banking banking = initialize(context);
         workWithExistingClients(banking);
@@ -45,27 +39,24 @@ public class Main {
     }
 
     public static void bankingServiceDemo(Banking banking) {
-        out.print("\n");
-        log.info("[Initialization using Banking implementation]");
+        out.println("\n==================Work banking ServiceDemo==================" );
 
-        Client sergey = new Client(CLIENT_NAMES[2], Client.Gender.FEMALE);
-        sergey = banking.addClient(sergey);
+        Client marina = new Client(CLIENT_NAMES[2], Client.Gender.FEMALE);
+        marina = banking.addClient(marina);
 
-        AbstractAccount saving = banking.createAccount(sergey, SavingAccount.class);
+        AbstractAccount saving = banking.createAccount(marina, SavingAccount.class);
+        banking.updateAccount(marina, saving);
         saving.deposit(1_000);
-        banking.updateAccount(sergey, saving);
 
-        AbstractAccount checking = banking.createAccount(sergey, CheckingAccount.class);
+        AbstractAccount checking = banking.createAccount(marina, CheckingAccount.class);
         checking.deposit(3_000);
+        banking.updateAccount(marina, checking);
 
-        banking.updateAccount(sergey, checking);
-        banking.getAllAccounts(sergey).stream().forEach(out::println);
-        out.print("\n");
+        banking.getAllAccounts(marina).stream().forEach(out::println);
     }
 
     public static void workWithExistingClients(Banking banking) {
-        out.print("\n");
-        log.info("[Work with existing clients]");
+        out.println("\n==================Work with existing clients==================" );
 
         Client artem = banking.getClient(CLIENT_NAMES[0]);
         try {
@@ -76,15 +67,21 @@ public class Main {
             artem.deposit(5_000);
         }
         out.println(artem);
+        log.debug("Artem's balance: " + artem.getBalance());
 
-        Client ivan = banking.getClient(CLIENT_NAMES[1]);
-        ivan.setDefaultActiveAccountIfNotSet();
-        ivan.withdraw(1_500);
-        double balance = ivan.getBalance();
-        out.println(ivan.getName() + ", текущий баланс: " + balance);
+        Client ilya = banking.getClient(CLIENT_NAMES[1]);
+        out.print("\n");
+        ilya.setDefaultActiveAccountIfNotSet();
+        out.println(ilya);
+        ilya.withdraw(1_500);
+        log.debug("Ilya's balance: " + ilya.getBalance());
 
-        banking.transferMoney(artem, ivan, 1_000);
-        banking.getClients().forEach(out::println);
+        banking.transferMoney(artem, ilya, 1_000);
+
+        out.print("\n");
+        log.info("Денежный перевод: " + artem.getName() + " to " + ilya.getName() + ". в размере " + 1_000);
+        log.debug("Artem's balance: " + artem.getBalance());
+        log.debug("Ivan's balance: " + ilya.getBalance());
         out.print("\n");
     }
 
@@ -96,15 +93,14 @@ public class Main {
         Client client_2 = new Client(CLIENT_NAMES[1], Client.Gender.MALE);
 
         //Клиент 1
-        AbstractAccount savingAccountC1 = new SavingAccount(1000);
-        AbstractAccount checkingAccountC1 = new CheckingAccount(1000);
+        AbstractAccount savingAccountC1 = new SavingAccount(1_000);
+        AbstractAccount checkingAccountC1 = new CheckingAccount(1_000);
         client_1.addAccount(savingAccountC1);
         client_1.addAccount(checkingAccountC1);
 
         //Клиент 2
         AbstractAccount checkingAccountC2 = new CheckingAccount(1500);
         client_2.addAccount(checkingAccountC2);
-
 
         banking.addClient(client_1);
         banking.addClient(client_2);

@@ -18,10 +18,8 @@ public class BankingImpl implements Banking{
 
     @Override
     public Client addClient(Client c) {
-
         Client created = repository.add(c);
         c.setRepository(repository);
-
         return created;
     }
 
@@ -31,7 +29,6 @@ public class BankingImpl implements Banking{
         Client foundClient = repository.getBy(name);
 
         if (foundClient != null) {
-
             return foundClient;
         }
 
@@ -40,7 +37,6 @@ public class BankingImpl implements Banking{
 
     @Override
     public List<Client> getClients() {
-
         return repository.getAll();
     }
 
@@ -53,7 +49,6 @@ public class BankingImpl implements Banking{
     public AbstractAccount createAccount(Client c, Class type) {
 
         AbstractAccount account = null;
-
         Client client = repository.get(c.getId());
 
         if (client != null) {
@@ -112,13 +107,11 @@ public class BankingImpl implements Banking{
 
     @Override
     public void transferMoney(Client from, Client to, double amount) {
-
         from.withdraw(amount);
         to.deposit(amount);
     }
 
     public void setRepository(ClientRepository repository) {
-
         this.repository = repository;
     }
 }

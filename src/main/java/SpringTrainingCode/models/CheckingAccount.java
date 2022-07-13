@@ -4,8 +4,6 @@ package SpringTrainingCode.models;
 public class CheckingAccount extends AbstractAccount{
     private double overdraft = 0;
 
-    public CheckingAccount() {}
-
     public CheckingAccount(double overdraft) {
         setOverdraft(overdraft);
     }

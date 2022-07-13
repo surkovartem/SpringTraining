@@ -22,9 +22,6 @@ public class Client {
 
     private ClientRepository repository;
 
-    public Client() {
-    }
-
     public Client(String name, Gender gender) {
         this.name = name;
         this.gender = gender;
